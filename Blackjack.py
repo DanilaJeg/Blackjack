@@ -2,34 +2,39 @@
 
 import random
 import time
+
+def initialize():
 # creating deck of cards
-faces = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
-suits = ["H", "S", "D", "C"]
+    faces = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+    suits = ["H", "S", "D", "C"]
 
-values = {
-        "2": 2,
-        "3": 3,
-        "4": 4,
-        "5": 5,
-        "6": 6,
-        "7": 7,
-        "8": 8,
-        "9": 9,
-        "10": 10,
-        "J": 10,
-        "Q": 10,
-        "K": 10,
-        "A": 11,
-        }
+    values = {
+            "2": 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8,
+            "9": 9,
+            "10": 10,
+            "J": 10,
+            "Q": 10,
+            "K": 10,
+            "A": 11,
+            }
 
-deck = []
-#adds every possible card into a deck
-for n in faces:
-    for suit in suits:
-        deck.append((n , suit))
-#creates shoe containing 6 decks
-shoe = deck * 6
-random.shuffle(shoe)
+    deck = []
+    #adds every possible card into a deck
+    for n in faces:
+        for suit in suits:
+            deck.append((n , suit))
+    #creates shoe containing 6 decks
+    shoe = deck * 6
+    random.shuffle(shoe)
+
+    return shoe, values
+shoe, values = initialize()
 
 class Hand:
     def __init__(self): # each hand will have cards and a score. SIMPLE
@@ -64,7 +69,7 @@ class Hand:
 
 
 class Player:
-    def __init__(self, name, cash):
+    def __init__(self, name: str, cash: int):
         self.name = name
         self.cash = cash
         self.hands = []
