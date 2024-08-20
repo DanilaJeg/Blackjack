@@ -174,11 +174,11 @@ class Player:
         winnings = 0
         winnings += self.bet * 2
         self.cash += winnings
-        print(f'{self.name} wins {winnings}')
+        print(f'{self.name} wins ${winnings}')
 
 
     def lose(self): #what to do if loses
-        print(f'{self.name} loses {self.bet}')
+        print(f'{self.name} loses ${self.bet}')
 
     def push(self): #if the game ends in a draw
         self.cash += self.bet
