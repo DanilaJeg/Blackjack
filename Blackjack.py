@@ -168,7 +168,7 @@ class Player:
         winnings = 0
         winnings += self.bet * 2.5
         self.cash += winnings
-        print(f'{self.name} wins {winnings}')
+        print(f'{self.name} wins ${winnings}')
 
     def win(self): #what to do if you won
         winnings = 0
