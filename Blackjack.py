@@ -148,3 +148,139 @@ class Dealer(Player):
 
     def __str__(self):
         return f'Dealer {self.dHand}'
+
+
+class Game:
+
+    def __init__(self):
+        self.players = {}
+        self.dealer = Dealer()
+
+    def addPlayer(self, other):
+        self.players[other.name] = other
+
+    def dealCards(self):
+        for name, player in self.players.items():
+            hand = Hand()
+            player.addHand(hand)
+        dHand = Hand()
+        self.dealer.addHand(dHand)
+        for i in range(2):
+            for name, player in self.players.items():
+                curr = player.hands[0]
+                curr.addCard()
+                if i == 2 and curr.score == 21:
+                    player.blackjack = True
+                time.sleep(1)
+                print(player)
+
+            self.dealer.dHand.addCard()
+        self.action()
+
+    def bets(self):
+        for name, player in self.players.items():
+            bet = int(input(f'${player.cash} | {name} please enter your bet: '))
+            while bet > player.cash:
+                bet = int(input("-Insufficient Funds-\n{name} please enter your bet: "))
+            player.bet = bet
+            player.cash -= player.bet
+
+    def action(self):
+        time.sleep(1)
+        print(f'{self.dealer.name} : {"".join(self.dealer.dHand.cards[0])}, ?? : {self.dealer.dHand.score - values[self.dealer.dHand.cards[1][0]]}')
+        time.sleep(1)
+        for name, player in self.players.items():
+            for i in range(len(player.hands)):
+                if values[player.hands[i].cards[0][0]] == values[player.hands[i].cards[1][0]] and player.cash >= player.bet:
+                    choice = input(f'{name}, hand {i + 1} -- {player.hands[i]} -- Choose to (s)tand, (d)ouble, (h)it, or (sp)lit: ')
+                    time.sleep(1)
+                else:
+                    choice = input(f'{name}, hand {i + 1} -- {player.hands[i]} -- Choose to (s)tand, (d)ouble, or (h)it: ')
+                    time.sleep(1)
+                valid = False
+                while not valid:
+                    if choice.lower() == "s":
+                        valid = True
+                        continue
+                    elif choice.lower() == "d":
+                        valid = True
+                        double = player.double(i)
+                        if double == 1:
+                            valid = False
+                        else:
+                            continue
+                    elif choice.lower() == "h":
+                        valid = True
+                        player.hit(i)
+                        while player.hands[i].score < 21 and choice == "h" and player.hands[i].score > 0:
+                            choice = input("(h)it or (s)tand: ")
+                            if choice == "h":
+                                player.hit(i)
+                            elif choice == "s":
+                                continue
+                            else:
+                                print("Invalid Choice")
+                                choice = "h"
+
+                        continue
+                    elif choice.lower() == "sp" and values[player.hands[i].cards[0][0]] == values[player.hands[i].cards[0][0]]:
+                        valid = True
+                        player.split(i)
+                        print(player)
+                        continue
+                    else:
+                        print("-INVALID CHOICE-")
+                        valid = False
+                    choice = input(f'{name} Choose to (s)tand, (d)ouble, or (h)it: ')
+
+        self.dealer.play()
+        self.winners()
+
+
+    def winners(self):
+        dealerScore = self.dealer.dHand.score
+        for name, player in self.players.items():
+            for i in range(len(player.hands)):
+                playerScore = player.hands[i].score
+                print(f'{name}, hand {i + 1}')
+                time.sleep(1)
+                if playerScore > dealerScore and playerScore == 21 and len(player.hands[i].cards) == 2:
+                    print(f"BLACKJACK FOR {name}, hand {i + 1} !!!")
+                    time.sleep(1)
+                    player.blackjack()
+                elif playerScore > dealerScore:
+                    print(f'{name} beats Dealer, hand {i + 1}')
+                    time.sleep(1)
+                    player.win()
+                elif playerScore < dealerScore:
+                    print(f'Dealer beats {name}, hand {i + 1}')
+                    time.sleep(1)
+                    player.lose()
+                else:
+                    print(f'Push!')
+                    time.sleep(1)
+                    player.push()
+        self.clearHands()
+
+
+
+
+
+    def clearHands(self):
+
+        for name, player in self.players.items():
+            player.rmCards()
+
+p1 = Player("Danila", 300)
+p2 = Player("Katherine", 400)
+p3 = Player("Seyi", 400)
+
+game = Game()
+game.addPlayer(p1)
+game.addPlayer(p2)
+game.addPlayer(p3)
+
+
+while True:
+    game.bets()
+    game.dealCards()
