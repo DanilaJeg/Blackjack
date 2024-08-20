@@ -69,12 +69,16 @@ class Hand:
         card2 = self.cards[1]
         self.cards.pop(1)
         print(self)
+        time.sleep(0.5)
         self.addCard()
+        time.sleep(0.5)
         print(self)
         new = Hand()
         new.cards.append(card2)
+        time.sleep(0.5)
         print(new)
         new.addCard()
+        time.sleep(0.5)
         print(new)
         return new
 
@@ -115,19 +119,22 @@ class Player:
         new = self.hands[h].spl()
         self.addHand(new)
         self.cash -= self.bet
+        self.bet * 2
+        
         #this adds the new hand to the players hands which works beautifully
         # now the tricky part begins
         # how to make it loop ??
         # i found out that some casinos only allow 1 split so i will be that type of casino lol
         # if i want to add infinite splits i can tbh
+
         for i in range(len(self.hands)):
             print(f'hand {i + 1} {self.hands[i]}')
         for i in range(len(self.hands)):
             hand = self.hands[i]
-            choice = input(f'${self.cash} | {self.name}, hand {i + 1} choose to (s)tand, (d)ouble, or (h)it: ')
+            choice = input(f'${self.cash} | {self.name}, hand {i + 1} -- {self.hands[i]} -- choose to (s)tand, (d)ouble, or (h)it: ')
             valid = False
             while not valid:
-                if choice.lower == "s":
+                if choice.lower() == "s":
                     valid = True
                     continue
                 elif choice.lower == "d":
