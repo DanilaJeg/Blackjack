@@ -61,3 +61,85 @@ class Hand:
 
     def __str__(self):
         return f': {" ".join("".join(card) for card in self.cards)} : {self.score}'
+
+
+class Player:
+    def __init__(self, name, cash):
+        self.name = name
+        self.cash = cash
+        self.hands = []
+
+    def addHand(self, other): #adds a hand object to self.hands
+        self.hands.append(other)
+
+    def rmCards(self): # resets the hands
+        self.hands = []
+
+    def hit(self, i=0): #adds card to a hand (i assume its possible to have more than one hand)
+        self.hands[i].addCard()
+        print(self)
+        if self.hands[i].score > 21:
+            print(f"{self.name}, BUST!!")
+            self.hands[i].score = -1
+    
+    def double(self, i): #adds card to hand and doubles the amount bet if possible
+        if self.cash < self.bet:
+            print("Insufficient Funds.")
+            return 1
+        self.cash -= self.bet
+        self.bet *= 2
+        self.hit(i)
+        return 0
+    
+    #TODO add a split method that actually works. 
+    
+    def blackjack(self): # checking for a blackjack
+        winnings = 0
+        winnings += self.bet * 2.5
+        self.cash += winnings
+        print(f'{self.name} wins {winnings}')
+
+    def win(self): #what to do if you won
+        winnings = 0
+        winnings += self.bet * 2
+        self.cash += winnings
+        print(f'{self.name} wins {winnings}')
+
+
+    def lose(self): #what to do if loses
+        print(f'{self.name} loses {self.bet}')
+
+    def push(self): #if the game ends in a draw
+        self.cash += self.bet
+
+    def __str__(self):
+        out = []
+        for hand in self.hands:
+            out.append(str(hand))
+
+        return f'${self.cash} | {self.name} {"  |||  ".join(out)}'
+
+# inherit from player class
+class Dealer(Player):
+
+    def __init__(self): # add a few new attributes
+        self.name = "Dealer"
+        self.dHand = Hand()
+
+    def play(self): #once everyone put their bets and and their choices the dealer will "reveal" his card and play stopping at 17 or more
+        print(self)
+        while self.dHand.score < 17 and self.dHand.score > 0:
+            self.dHand.addCard()
+            self.score = self.dHand.calcScore()
+            print(self)
+        if self.dHand.score > 21: # if it goes over the score of 21 its a bust meaning score of 0 appointed
+            self.dHand.score = 0
+
+    def addHand(self, other):
+        self.dHand = other
+
+    def rmCards(self):
+        self.dHand = None
+
+    def __str__(self):
+        return f'Dealer {self.dHand}'
