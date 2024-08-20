@@ -63,6 +63,21 @@ class Hand:
         shoe.pop(0)
         self.calcScore()
 
+    def spl(self):
+        # this right here basically creates a new hand for that player
+        card1 = self.cards[0]
+        card2 = self.cards[1]
+        self.cards.pop(1)
+        print(self)
+        self.addCard()
+        print(self)
+        new = Hand()
+        new.cards.append(card2)
+        print(new)
+        new.addCard()
+        print(new)
+        return new
+
 
     def __str__(self):
         return f': {" ".join("".join(card) for card in self.cards)} : {self.score}'
@@ -96,8 +111,52 @@ class Player:
         self.hit(i)
         return 0
     
-    #TODO add a split method that actually works. 
-    
+    def split(self, h): #splitting works BUT only allows to do it once
+        new = self.hands[h].spl()
+        self.addHand(new)
+        self.cash -= self.bet
+        #this adds the new hand to the players hands which works beautifully
+        # now the tricky part begins
+        # how to make it loop ??
+        # i found out that some casinos only allow 1 split so i will be that type of casino lol
+        # if i want to add infinite splits i can tbh
+        for i in range(len(self.hands)):
+            print(f'hand {i + 1} {self.hands[i]}')
+        for i in range(len(self.hands)):
+            hand = self.hands[i]
+            choice = input(f'${self.cash} | {self.name}, hand {i + 1} choose to (s)tand, (d)ouble, or (h)it: ')
+            valid = False
+            while not valid:
+                if choice.lower == "s":
+                    valid = True
+                    continue
+                elif choice.lower == "d":
+                    valid = True
+                    double = self.double(i)
+                    if double == 1:
+                        valid = False
+                    else:
+                        continue
+                elif choice.lower() == "h":
+                    valid = True
+                    self.hit(i)
+                    while self.hands[i].score < 21 and choice == "h" and self.hands[i].score > 0:
+                        choice = input("(h)it or (s)tand: ")
+                        if choice == "h":
+                            self.hit(i)
+                        elif choice == "s":
+                            continue
+                        else:
+                            print("Invalid Choice")
+                            choice = "h"
+                        continue
+                else:
+                    print("-INVALID CHOICE-")
+                    valid = False
+                    choice = input(f'{self} Choose to (s)tand, (d)ouble, or (h)it: ')
+
+                    
+
     def blackjack(self): # checking for a blackjack
         winnings = 0
         winnings += self.bet * 2.5
@@ -271,9 +330,9 @@ class Game:
         for name, player in self.players.items():
             player.rmCards()
 
-p1 = Player("Danila", 300)
-p2 = Player("Katherine", 400)
-p3 = Player("Seyi", 400)
+p1 = Player("player1", 300)
+p2 = Player("player2", 400)
+p3 = Player("player3", 400)
 
 game = Game()
 game.addPlayer(p1)
