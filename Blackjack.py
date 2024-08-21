@@ -81,7 +81,12 @@ class Hand:
         time.sleep(0.5)
         print(new)
         return new
-
+    
+    def __len__(self):
+        i = 0
+        for card in self.cards:
+            i += 1
+        return i
 
     def __str__(self):
         return f': {" ".join("".join(card) for card in self.cards)} : {self.score}'
@@ -101,7 +106,7 @@ class Player:
 
     def hit(self, i=0): #adds card to a hand (i assume its possible to have more than one hand)
         self.hands[i].addCard()
-        print(self)
+        print(f'{self.name} hand {i}: {self.hands[i]}')
         if self.hands[i].score > 21:
             print(f"{self.name}, BUST!!")
             self.hands[i].score = -1
@@ -119,7 +124,7 @@ class Player:
         new = self.hands[h].spl()
         self.addHand(new)
         self.cash -= self.bet
-        self.bet * 2
+        self.bet *= 2
         
         #this adds the new hand to the players hands which works beautifully
         # now the tricky part begins
@@ -131,16 +136,16 @@ class Player:
             print(f'hand {i + 1} {self.hands[i]}')
         for i in range(len(self.hands)):
             hand = self.hands[i]
-            choice = input(f'${self.cash} | {self.name}, hand {i + 1} -- {self.hands[i]} -- choose to (s)tand, (d)ouble, or (h)it: ')
+            choice = input(f'${self.cash} | {self.name}, hand {i + 1} -- {self.hands[i]} -- choose to (s)tand, (d)ouble or (h)it: ')            
             valid = False
             while not valid:
                 if choice.lower() == "s":
                     valid = True
                     continue
-                elif choice.lower == "d":
+                elif choice.lower() == "d":
                     valid = True
-                    double = self.double(i)
-                    if double == 1:
+                    verify = self.double(i)
+                    if verify == 1:
                         valid = False
                     else:
                         continue
@@ -157,11 +162,19 @@ class Player:
                             print("Invalid Choice")
                             choice = "h"
                         continue
+                    '''
+                saving this for another possible split
+                elif choice.lower() == "sp":
+                    valid = True
+                    self.split(i)
+                    print(self)
+                    continue
+                    '''
                 else:
                     print("-INVALID CHOICE-")
                     valid = False
-                    choice = input(f'{self} Choose to (s)tand, (d)ouble, or (h)it: ')
-
+                    choice = input(f'{self.name} hand {i}: {self.hands[i]} Choose to (s)tand, (d)ouble, or (h)it: ')
+# the issue with infinite split is that it will keep asking all the hands when i want it to ask new hands ygm
                     
 
     def blackjack(self): # checking for a blackjack
@@ -270,8 +283,8 @@ class Game:
                         continue
                     elif choice.lower() == "d":
                         valid = True
-                        double = player.double(i)
-                        if double == 1:
+                        verify = player.double(i)
+                        if verify == 1:
                             valid = False
                         else:
                             continue
